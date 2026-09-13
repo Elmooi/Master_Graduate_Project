@@ -59,8 +59,7 @@ optimization). Bold = best of the three per system/verifier:
 
 Ours is the best defense in 17 of these 20 system×verifier cells across all
 10 voice-cloning systems, and stays within a few points of Enkidu on the
-remaining 3 (StyleTTS2, GPT-SoVITS ResNet) — see `paper/SUPER.tex` for the
-full breakdown and discussion of the mixed StyleTTS2 result.
+remaining 3 (StyleTTS2, GPT-SoVITS ResNet).
 
 **MLDG ablation** — average DSR before/after adding the meta-learning
 (domain-generalization) objective to training, held out to systems never
@@ -159,8 +158,9 @@ python eval_zonos_only.py --prot_root <protected_dir> --orig_root <original_dir>
 
 ## 📄 Paper
 
-`paper/SUPER.tex` has the full methodology, all 10 systems' results,
-ablations, and the MLDG training details.
+Based on an unpublished manuscript currently under review; the manuscript
+itself isn't included in this repo, but the pipeline diagram above and the
+results/ablations in this README summarize its methodology and findings.
 
 ## 📜 License
 
