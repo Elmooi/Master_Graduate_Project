@@ -1,4 +1,4 @@
-# SUPER: Speaker-Conditioned Universal Perturbation Generator against Unauthorized Voice Cloning
+# 석사 졸업논문 프로젝트 : 음성 딥페이크 생성 억제를 위한 화자 조건부 적대적 섭동 생성기 연구
 
 SUPER protects a person's voice recordings from unauthorized zero-shot voice
 cloning. A lightweight generator network is conditioned on a target speaker's
