@@ -22,7 +22,11 @@ it keeps the final model's training/protection/evaluation pipeline and
 results, not every ablation and one-off experiment script from the project's
 development history.
 
-## Results
+## 🧭 Overview
+
+![Pipeline overview](paper/overview.jpg)
+
+## 📊 Results
 
 **Defense success rate (DSR)** — fraction of protected recordings whose
 voice-clone no longer matches the true speaker under an ECAPA-TDNN or ResNet
@@ -93,7 +97,7 @@ generator is trained):
 | UAP generation (one forward pass) | 0.0002 s |
 | Applying the perturbation to a 4s clip | 0.00025 s → real-time factor **0.000064** |
 
-## Architecture
+## 🏗️ Architecture
 
 - `models/generator.py` — `WaveformUAPGenerator`: takes the concatenated
   four-encoder speaker embedding (1024-d) and emits a fixed-length waveform
@@ -116,7 +120,7 @@ generator is trained):
   own SDKs/APIs (not all included in this trimmed repo — see the paper for
   full methodology).
 
-## Setup
+## ⚙️ Setup
 
 Each TTS victim system needs its own conda environment due to conflicting
 dependency pins; this repo ships `pip freeze` snapshots for the two
@@ -138,7 +142,7 @@ You'll also need:
 
 See `THIRD_PARTY_NOTICES.md` for the full dependency list.
 
-## Usage
+## 🚀 Usage
 
 ```bash
 # 1. Train the generator against the 4-encoder MLDG ensemble
@@ -153,12 +157,12 @@ conda activate zonos
 python eval_zonos_only.py --prot_root <protected_dir> --orig_root <original_dir>
 ```
 
-## Paper
+## 📄 Paper
 
 `paper/SUPER.tex` has the full methodology, all 10 systems' results,
 ablations, and the MLDG training details.
 
-## License
+## 📜 License
 
 MIT (this repository's own code) — see `LICENSE` and `THIRD_PARTY_NOTICES.md`
 for dependencies.
