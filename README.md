@@ -25,35 +25,25 @@ development history.
 
 **Black-box protection rate** — fraction of protected recordings whose
 voice-clone no longer matches the true speaker under an ECAPA-TDNN or ResNet
-speaker verifier (higher is better; original, unprotected recordings score
-near 0% by construction). Measured across 6 accent/dataset groups (VCTK,
-LibriSpeech, Common Voice, plus three CSNED/CSUKIED/FST accent corpora),
-70–300 held-out (never-trained-on) speaker/utterance pairs per system:
+speaker verifier (higher is better; **Orig.** = unprotected recording,
+**Enkidu** = per-speaker optimization-based UAP baseline, **Ours** = SUPER,
+single forward pass, no per-speaker optimization). Bold = best of the three
+per system/verifier:
 
-| Target TTS system | ECAPA protection | ResNet protection |
-|---|---|---|
-| GPT-SoVITS | 86.8% | 86.8% |
-| Tortoise-TTS | 72.3% | 70.7% |
-| Qwen3-TTS | 45.0% (59.3% @ th=0.45) | 41.3% (56.7% @ th=0.45) |
-| XTTS-v2 (Coqui) | 60.7% | 53.9% |
-| SV2TTS (Real-Time-Voice-Cloning) | 74.0% | 81.3% |
-| StyleTTS2 | 68.9% | 73.5% |
-| Spark-TTS | 91.8% | 93.2% |
-| Dia-1.6B | 93.5% | 94.9% |
-| ElevenLabs (commercial API) | 55.0% | 53.3% |
+<table>
+<thead>
+<tr><th></th><th colspan="3">GPT-SoVITS</th><th colspan="3">StyleTTS2</th><th colspan="3">XTTS-v2</th><th colspan="3">Spark-TTS</th><th colspan="3">Dia-1.6B</th></tr>
+<tr><th>ASV</th><th>Orig.</th><th>Enkidu</th><th>Ours</th><th>Orig.</th><th>Enkidu</th><th>Ours</th><th>Orig.</th><th>Enkidu</th><th>Ours</th><th>Orig.</th><th>Enkidu</th><th>Ours</th><th>Orig.</th><th>Enkidu</th><th>Ours</th></tr>
+</thead>
+<tbody>
+<tr><td>ECAPA-TDNN</td><td>0.13</td><td><b>0.76</b></td><td>0.72</td><td>0.28</td><td><b>0.76</b></td><td>0.68</td><td>0.23</td><td>0.54</td><td><b>0.74</b></td><td>0.05</td><td>0.45</td><td><b>0.81</b></td><td>0.37</td><td>0.83</td><td><b>0.93</b></td></tr>
+<tr><td>ResNet</td><td>0.16</td><td>0.73</td><td><b>0.74</b></td><td>0.28</td><td><b>0.80</b></td><td>0.73</td><td>0.08</td><td>0.39</td><td><b>0.68</b></td><td>0.06</td><td>0.40</td><td><b>0.93</b></td><td>0.34</td><td>0.80</td><td><b>0.94</b></td></tr>
+</tbody>
+</table>
 
-**Vs. Enkidu** (per-speaker optimization-based UAP baseline), same test
-speakers/utterances, same verifiers:
-
-| Target TTS system | Ours (ECAPA / ResNet) | Enkidu (ECAPA / ResNet) |
-|---|---|---|
-| XTTS-v2 | 74.9% / 68.9% | 54.8% / 39.3% |
-| Spark-TTS | 91.8% / 93.2% | 45.1% / 40.8% |
-| StyleTTS2 | 68.9% / 73.5% | 76.3% / 80.8% |
-| Dia-1.6B | 93.5% / 94.9% | 83.8% / 80.6% |
-
-Ours wins decisively against 3 of 4 systems and is competitive on the 4th
-(StyleTTS2) — see `paper/SUPER.tex` for the full breakdown, ablations, and
+Ours is the best defense in 7 of the 10 system×verifier cells, and stays
+within a few points of Enkidu on the remaining 3 (StyleTTS2, GPT-SoVITS
+ResNet) — see `paper/SUPER.tex` for the full breakdown, ablations, and
 discussion of the mixed StyleTTS2 result.
 
 **Efficiency** (deployment-time cost, no gradient computation needed once the
