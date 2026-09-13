@@ -13,8 +13,9 @@ The generator is trained against an ensemble of four independently-trained
 speaker-embedding models (**Zonos**, **CAM++**, **YourTTS's speaker encoder**,
 **ECAPA-TDNN**) using **MLDG** (meta-learning for domain generalization) so
 that the perturbation transfers to voice-cloning systems it never saw during
-training. This repo evaluates black-box transfer against 9 independent TTS
-systems plus the commercial ElevenLabs API.
+training. This repo evaluates transfer against 10 independent voice-cloning
+systems: 3 (Zonos, YourTTS, CosyVoice2) share a speaker encoder with the
+training ensemble, the other 7 are fully black-box.
 
 This is a trimmed, portfolio-oriented copy of the full research repository:
 it keeps the final model's training/protection/evaluation pipeline and
@@ -23,12 +24,23 @@ development history.
 
 ## Results
 
-**Black-box protection rate** — fraction of protected recordings whose
+**Defense success rate (DSR)** — fraction of protected recordings whose
 voice-clone no longer matches the true speaker under an ECAPA-TDNN or ResNet
-speaker verifier (higher is better; **Orig.** = unprotected recording,
-**Enkidu** = per-speaker optimization-based UAP baseline, **Ours** = SUPER,
-single forward pass, no per-speaker optimization). Bold = best of the three
-per system/verifier:
+speaker verifier at its EER operating point (higher is better; **Orig.** =
+unprotected recording, **Enkidu** = per-speaker optimization-based UAP
+baseline, **Ours** = SUPER, single forward pass, no per-speaker
+optimization). Bold = best of the three per system/verifier:
+
+<table>
+<thead>
+<tr><th></th><th colspan="3">Zonos</th><th colspan="3">CosyVoice2</th><th colspan="3">YourTTS</th><th colspan="3">Chatterbox</th><th colspan="3">Qwen3-TTS</th></tr>
+<tr><th>ASV</th><th>Orig.</th><th>Enkidu</th><th>Ours</th><th>Orig.</th><th>Enkidu</th><th>Ours</th><th>Orig.</th><th>Enkidu</th><th>Ours</th><th>Orig.</th><th>Enkidu</th><th>Ours</th><th>Orig.</th><th>Enkidu</th><th>Ours</th></tr>
+</thead>
+<tbody>
+<tr><td>ECAPA-TDNN</td><td>0.02</td><td>0.11</td><td><b>0.85</b></td><td>0.09</td><td>0.57</td><td><b>0.73</b></td><td>0.15</td><td>0.21</td><td><b>0.99</b></td><td>0.05</td><td>0.24</td><td><b>0.81</b></td><td>0.02</td><td>0.60</td><td><b>0.70</b></td></tr>
+<tr><td>ResNet</td><td>0.00</td><td>0.06</td><td><b>0.91</b></td><td>0.07</td><td>0.46</td><td><b>0.74</b></td><td>0.05</td><td>0.10</td><td><b>0.90</b></td><td>0.03</td><td>0.23</td><td><b>0.81</b></td><td>0.01</td><td>0.59</td><td><b>0.63</b></td></tr>
+</tbody>
+</table>
 
 <table>
 <thead>
@@ -41,10 +53,36 @@ per system/verifier:
 </tbody>
 </table>
 
-Ours is the best defense in 7 of the 10 system×verifier cells, and stays
-within a few points of Enkidu on the remaining 3 (StyleTTS2, GPT-SoVITS
-ResNet) — see `paper/SUPER.tex` for the full breakdown, ablations, and
-discussion of the mixed StyleTTS2 result.
+Ours is the best defense in 17 of these 20 system×verifier cells across all
+10 voice-cloning systems, and stays within a few points of Enkidu on the
+remaining 3 (StyleTTS2, GPT-SoVITS ResNet) — see `paper/SUPER.tex` for the
+full breakdown and discussion of the mixed StyleTTS2 result.
+
+**MLDG ablation** — average DSR before/after adding the meta-learning
+(domain-generalization) objective to training, held out to systems never
+seen during training:
+
+| Model | w/o MLDG | w/ MLDG | Δ |
+|---|---|---|---|
+| CosyVoice2 | 0.67 | **0.73** | **+0.06** |
+| Zonos | 0.80 | **0.85** | **+0.05** |
+| YourTTS | 0.89 | **0.98** | **+0.09** |
+
+**Robustness to post-processing** (GPT-SoVITS, n=118) — DSR after the
+protected recording is passed through common audio transforms before
+cloning:
+
+| Post-processing | ECAPA-TDNN | ResNet |
+|---|---|---|
+| Clean (no processing) | 0.881 | 0.898 |
+| Frequency filtering | 0.881 | 0.932 |
+| 8-bit quantization | 0.915 | 0.907 |
+| Downsampling to 8 kHz | 1.000 | 1.000 |
+| Denoising (VoiceFixer) | 0.703 | 0.686 |
+
+The defense is robust to filtering, quantization, and downsampling (DSR
+stays ≥0.88, and downsampling drives it to 1.0), and degrades gracefully
+under aggressive ML-based denoising rather than collapsing.
 
 **Efficiency** (deployment-time cost, no gradient computation needed once the
 generator is trained):
@@ -117,7 +155,7 @@ python eval_zonos_only.py --prot_root <protected_dir> --orig_root <original_dir>
 
 ## Paper
 
-`paper/SUPER.tex` has the full methodology, all 9 TTS systems' results,
+`paper/SUPER.tex` has the full methodology, all 10 systems' results,
 ablations, and the MLDG training details.
 
 ## License
