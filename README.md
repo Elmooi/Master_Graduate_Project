@@ -112,31 +112,22 @@ generator is trained):
   ensemble with an MLDG meta-learning objective for cross-system transfer.
 - `protect_ensemble_full4.py` — applies a trained generator to a directory of
   speakers' recordings.
-- `eval_zonos_only.py` — example black-box evaluation script: clones a
-  protected/unprotected reference through a victim TTS system and measures
-  the true-speaker cosine similarity via independent verifiers. The other 8
-  TTS systems in the results table above use the same pattern against their
-  own SDKs/APIs (not all included in this trimmed repo — see the paper for
-  full methodology).
+
+Evaluation against each victim TTS system (cloning a protected/unprotected
+reference and measuring true-speaker cosine similarity via independent
+verifiers) follows the same pattern across all 10 systems in the results
+table above; those per-system scripts aren't included in this trimmed repo.
 
 ## ⚙️ Setup
-
-Each TTS victim system needs its own conda environment due to conflicting
-dependency pins; this repo ships `pip freeze` snapshots for the two
-environments needed to run the included scripts:
 
 ```bash
 conda create -n TTS python=3.9 && conda activate TTS
 pip install -r environment/requirements-TTS.txt
-
-conda create -n zonos python=3.10 && conda activate zonos
-pip install -r environment/requirements-zonos.txt
 ```
 
 You'll also need:
 - [Zonos](https://github.com/Zyphra/Zonos) (Apache-2.0) — `git clone` and
-  `checkout bc40d98`, then update `zonos_root` in `config.py` and the path in
-  `eval_zonos_only.py`.
+  `checkout bc40d98`, then update `zonos_root` in `config.py`.
 - A VoxCeleb1 copy for training (`voxceleb1_root` in `config.py`).
 
 See `THIRD_PARTY_NOTICES.md` for the full dependency list.
@@ -150,10 +141,6 @@ python train_ensemble_full4_mldg.py --epochs 500 --gpu 0 --speakers_per_batch 16
 
 # 2. Apply the trained generator to a directory of speakers
 python protect_ensemble_full4.py --ckpt checkpoints/ensemble_full4_mldg/generator_latest.pt
-
-# 3. Evaluate black-box transfer against a victim TTS system
-conda activate zonos
-python eval_zonos_only.py --prot_root <protected_dir> --orig_root <original_dir>
 ```
 
 ## 📄 Paper
